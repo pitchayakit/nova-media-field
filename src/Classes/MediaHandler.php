@@ -370,6 +370,7 @@ class MediaHandler
 
         if ($isImageFile || $isVideoFile) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+            $generatedImages['raw']['file_name'] = pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
             $model->image_sizes = json_encode($generatedImages);
         }
 
