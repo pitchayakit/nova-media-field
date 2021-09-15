@@ -37516,7 +37516,7 @@ var render = function() {
                                 [
                                   _vm._v(
                                     "\n            " +
-                                      _vm._s(_vm.__("Remove")) +
+                                      _vm._s(_vm.__("Delete")) +
                                       "\n          "
                                   )
                                 ]

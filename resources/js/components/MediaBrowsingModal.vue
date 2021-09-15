@@ -71,7 +71,7 @@
               @click.prevent="removeItems"
               v-if="stateActiveFile !== void 0"
             >
-              {{ __('Remove') }}
+              {{ __('Delete') }}
             </button>
         </div>
 
