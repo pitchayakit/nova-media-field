@@ -833,8 +833,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _debounce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../debounce */ "./resources/js/debounce.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _debounce__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../debounce */ "./resources/js/debounce.js");
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -1060,39 +1068,80 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.stateActiveFile = this.activeFile ? _objectSpread({}, this.activeFile) : void 0;
         this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? _toConsumableArray(this.selectedFiles) : [];
         this.addEventListeners();
+        this.refreshFiles();
       } else {
         this.clearEventListeners();
       }
     }
   },
   methods: {
-    removeItems: function removeItems() {
+    refreshFiles: function refreshFiles() {
       var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var response, data, newFiles;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get('/api/media', {
+                  params: {
+                    collection: _this.currentCollection
+                  }
+                });
+
+              case 2:
+                response = _context.sent;
+                data = response.data.data;
+                newFiles = data.map(function (file) {
+                  return {
+                    uploading: false,
+                    processed: true,
+                    data: file
+                  };
+                });
+                window.mediaLibrary.files = _toConsumableArray(newFiles);
+
+                _this.$emit('updateMedia');
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    removeItems: function removeItems() {
+      var _this2 = this;
 
       axios["delete"]('/api/media/delete', {
         data: {
           stateActiveFile: this.stateActiveFile.data
         }
       }).then(function (response) {
-        var selectMediaId = _this.stateActiveFile.data.id;
+        var selectMediaId = _this2.stateActiveFile.data.id;
 
-        var i = _this.files.findIndex(function (item) {
+        var i = _this2.files.findIndex(function (item) {
           return item.processed && +item.data.id === +selectMediaId;
         });
 
-        _this.files.splice(i, 1);
+        _this2.files.splice(i, 1);
 
-        window.mediaLibrary.files = _this.files;
+        window.mediaLibrary.files = _toConsumableArray(_this2.files);
 
-        var j = _this.stateSelectedFiles.findIndex(function (item) {
+        var j = _this2.stateSelectedFiles.findIndex(function (item) {
           return item.processed && +item.data.id === +selectMediaId;
         });
 
-        _this.stateSelectedFiles.splice(j, 1);
+        _this2.stateSelectedFiles.splice(j, 1);
 
-        _this.$emit('update:selectedFiles', _toConsumableArray(_this.stateSelectedFiles));
+        _this2.$emit('update:selectedFiles', _toConsumableArray(_this2.stateSelectedFiles));
 
-        _this.stateActiveFile = void 0;
+        _this2.$emit('updateMedia');
+
+        _this2.stateActiveFile = void 0;
       });
     },
     onSearchInput: function onSearchInput(event) {
@@ -1223,7 +1272,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.$emit('loadImages');
       }
     },
-    setEndDrag: (0,_debounce__WEBPACK_IMPORTED_MODULE_0__["default"])(function () {
+    setEndDrag: (0,_debounce__WEBPACK_IMPORTED_MODULE_1__["default"])(function () {
       if (this.endDrag) {
         this.draggingFile = false;
         this.draggingOverDropzone = false;
@@ -1264,7 +1313,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.stateActiveFile = file;
     },
     uploadFiles: function uploadFiles() {
-      var _this2 = this;
+      var _this3 = this;
 
       var _iterator2 = _createForOfIteratorHelper(this.files),
           _step2;
@@ -1300,8 +1349,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               return ((_file$data = file.data) === null || _file$data === void 0 ? void 0 : _file$data.id) && file.data.id === response.data.id;
             }))) {
-              if (_this2.uploadOnly) {
-                _this2.$emit('updateFiles', {
+              if (_this3.uploadOnly) {
+                _this3.$emit('updateFiles', {
                   uploading: false,
                   processed: true,
                   data: response.data
@@ -1317,14 +1366,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               }
             }
 
-            _this2.$nextTick(function () {
-              _this2.$emit('updateMedia');
+            _this3.$nextTick(function () {
+              _this3.$emit('updateMedia');
             });
           })["catch"](function (error) {
             if (!error.response) {
               Nova.$emit('error', 'Failed to upload image.');
 
-              _this2.$emit('updateMedia');
+              _this3.$emit('updateMedia');
 
               return;
             }
@@ -1343,7 +1392,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               window.mediaLibrary.files.splice(0, 1);
             }
 
-            _this2.$emit('updateMedia');
+            _this3.$emit('updateMedia');
           });
         };
 

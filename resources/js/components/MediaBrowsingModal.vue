@@ -228,6 +228,8 @@ export default {
         this.stateActiveFile = this.activeFile ? { ...this.activeFile } : void 0;
         this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? [...this.selectedFiles] : [];
         this.addEventListeners();
+        this.refreshFiles();
+        
       } else {
         this.clearEventListeners();
       }
@@ -235,6 +237,29 @@ export default {
   },
 
   methods: {
+    async refreshFiles() {
+      const response = await axios.get('/api/media', {
+        params: {
+          collection: this.currentCollection,
+        },
+      });
+
+      const { data } = response.data;
+      let newFiles = data.map(file => {
+        return {
+          uploading: false,
+          processed: true,
+          data: file,
+        };
+      });
+      
+      window.mediaLibrary.files = [
+         ...newFiles
+      ];
+
+      this.$emit('updateMedia');
+    },
+
     removeItems() {
       axios.delete('/api/media/delete', {
         data : {
@@ -246,11 +271,12 @@ export default {
           let selectMediaId = this.stateActiveFile.data.id;
           let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
           this.files.splice(i, 1);
-          window.mediaLibrary.files = this.files
-
+          window.mediaLibrary.files = [...this.files]
+         
           let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
           this.stateSelectedFiles.splice(j, 1);
           this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+          this.$emit('updateMedia');
 
           this.stateActiveFile = void 0;
       });
