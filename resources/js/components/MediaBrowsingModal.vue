@@ -225,11 +225,10 @@ export default {
       }
 
       if (newVal) {
+        this.refreshFiles();
         this.stateActiveFile = this.activeFile ? { ...this.activeFile } : void 0;
         this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? [...this.selectedFiles] : [];
         this.addEventListeners();
-        this.refreshFiles();
-        
       } else {
         this.clearEventListeners();
       }

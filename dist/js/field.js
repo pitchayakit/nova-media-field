@@ -1065,10 +1065,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       if (newVal) {
+        this.refreshFiles();
         this.stateActiveFile = this.activeFile ? _objectSpread({}, this.activeFile) : void 0;
         this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? _toConsumableArray(this.selectedFiles) : [];
         this.addEventListeners();
-        this.refreshFiles();
       } else {
         this.clearEventListeners();
       }
