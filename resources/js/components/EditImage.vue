@@ -129,9 +129,9 @@ export default {
   }
 }
 
-.form-field {
-  padding: 10px 20px;
-}
+// .form-field {
+//   padding: 10px 20px;
+// }
 
 .label-field {
   padding: 10px 20px;

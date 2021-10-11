@@ -3602,7 +3602,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".file-name {\n  font-weight: bold;\n  color: #4099de;\n}\n.thumbnail-container {\n  position: relative;\n  width: 100%;\n  margin-bottom: 15px;\n}\n.thumbnail-container img,\n.thumbnail-container svg,\n.thumbnail-container video {\n  width: 100%;\n  max-height: 250px;\n  top: 0;\n  left: 0;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.form-field {\n  padding: 10px 20px;\n}\n.label-field {\n  padding: 10px 20px;\n}\n.label-field > label {\n  display: block;\n  padding: 2px 0;\n}\n.label-field > label span:nth-child(1) {\n  font-weight: bold;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".file-name {\n  font-weight: bold;\n  color: #4099de;\n}\n.thumbnail-container {\n  position: relative;\n  width: 100%;\n  margin-bottom: 15px;\n}\n.thumbnail-container img,\n.thumbnail-container svg,\n.thumbnail-container video {\n  width: 100%;\n  max-height: 250px;\n  top: 0;\n  left: 0;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.label-field {\n  padding: 10px 20px;\n}\n.label-field > label {\n  display: block;\n  padding: 2px 0;\n}\n.label-field > label span:nth-child(1) {\n  font-weight: bold;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
