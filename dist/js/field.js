@@ -702,6 +702,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 function isString(value) {
   return typeof value === 'string' || value instanceof String;
 }
@@ -1003,17 +1005,32 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'updateFiles', 'files', 'multipleSelect', 'loadingMediaFiles', 'showUploadArea', 'uploadOnly'],
   data: function data() {
+    var _this$field$withThumb;
+
     return {
       draggingOverDropzone: false,
       draggingFile: false,
       searchValue: '',
       listenUploadArea: false,
       stateActiveFile: void 0,
-      stateSelectedFiles: []
+      stateSelectedFiles: [],
+      withThumbnails: (_this$field$withThumb = this.field.withThumbnails) !== null && _this$field$withThumb !== void 0 ? _this$field$withThumb : true
     };
   },
   computed: {
@@ -1116,33 +1133,47 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     removeItems: function removeItems() {
       var _this2 = this;
 
-      axios["delete"]('/api/media/delete', {
-        data: {
-          stateActiveFile: this.stateActiveFile.data
-        }
-      }).then(function (response) {
-        var selectMediaId = _this2.stateActiveFile.data.id;
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var selectMediaId, i, j;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return axios["delete"]('/api/media/delete', {
+                  data: {
+                    stateActiveFile: _this2.stateActiveFile.data.id
+                  }
+                });
 
-        var i = _this2.files.findIndex(function (item) {
-          return item.processed && +item.data.id === +selectMediaId;
-        });
+              case 2:
+                selectMediaId = _this2.stateActiveFile.data.id;
+                i = _this2.files.findIndex(function (item) {
+                  return item.processed && +item.data.id === +selectMediaId;
+                });
 
-        _this2.files.splice(i, 1);
+                _this2.files.splice(i, 1);
 
-        window.mediaLibrary.files = _toConsumableArray(_this2.files);
+                window.mediaLibrary.files = _this2.files;
+                j = _this2.stateSelectedFiles.findIndex(function (item) {
+                  return item.processed && +item.data.id === +selectMediaId;
+                });
 
-        var j = _this2.stateSelectedFiles.findIndex(function (item) {
-          return item.processed && +item.data.id === +selectMediaId;
-        });
+                _this2.stateSelectedFiles.splice(j, 1);
 
-        _this2.stateSelectedFiles.splice(j, 1);
+                _this2.$emit('update:selectedFiles', _toConsumableArray(_this2.stateSelectedFiles));
 
-        _this2.$emit('update:selectedFiles', _toConsumableArray(_this2.stateSelectedFiles));
+                _this2.$emit('updateMedia');
 
-        _this2.$emit('updateMedia');
+                _this2.stateActiveFile = void 0;
 
-        _this2.stateActiveFile = void 0;
-      });
+              case 11:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     },
     onSearchInput: function onSearchInput(event) {
       var oldValue = this.searchValue;
@@ -1327,6 +1358,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
 
           var form = new FormData();
+          form.append('withThumbnails', _this3.withThumbnails);
           form.append('file', fileInfo.fileInput);
 
           if (fileInfo.collection) {
@@ -3698,7 +3730,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".od-modal {\n  height: 88vh;\n}\n.od-modal > div:first-child {\n  height: calc(88vh - 60px);\n}\n.od-modal > div:first-child > div {\n  height: calc(88vh - 60px - 110px);\n}\n.od-modal #media-dropzone .img-collection {\n  height: 100%;\n  max-height: none;\n}\n.od-modal .media-dropzone-wrapper {\n  height: 100%;\n}\n.od-modal .mime-type-icon svg {\n  position: static;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".od-modal {\n  height: 88vh;\n}\n.od-modal > div:first-child {\n  height: calc(88vh - 60px);\n}\n.od-modal > div:first-child > div {\n  height: calc(100% - 80px);\n}\n.od-modal #media-dropzone .img-collection {\n  height: 100%;\n  max-height: none;\n}\n.od-modal .media-dropzone-wrapper {\n  height: 100%;\n}\n.od-modal .mime-type-icon svg {\n  position: static;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -37194,7 +37226,7 @@ var render = function() {
             field: _vm.field,
             multipleSelect: _vm.multipleSelect,
             files: _vm.files,
-            uploadOnly: true,
+            "upload-only": true,
             isModalOpen: _vm.isModalOpen,
             chosenCollection: _vm.chosenCollection,
             activeFile: _vm.activeFile,
@@ -37284,20 +37316,22 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "media-index-preview" },
-    [
-      _c("media-preview", {
-        attrs: {
-          ordering: false,
-          files: _vm.files,
-          multiple: _vm.multipleSelect
-        }
-      })
-    ],
-    1
-  )
+  return _vm.files && _vm.files.length
+    ? _c(
+        "div",
+        { staticClass: "media-index-preview" },
+        [
+          _c("media-preview", {
+            attrs: {
+              ordering: false,
+              files: _vm.files,
+              multiple: _vm.multipleSelect
+            }
+          })
+        ],
+        1
+      )
+    : _c("div", [_vm._v("—")])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -37567,9 +37601,9 @@ var render = function() {
                                 },
                                 [
                                   _vm._v(
-                                    "\n            " +
+                                    "\n          " +
                                       _vm._s(_vm.__("Delete")) +
-                                      "\n          "
+                                      "\n        "
                                   )
                                 ]
                               )
@@ -37636,6 +37670,64 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
+              _vm.showUploadArea || _vm.draggingFile
+                ? _c(
+                    "label",
+                    {
+                      staticClass: "flex",
+                      attrs: { for: "generate-thumbnails" }
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.withThumbnails,
+                            expression: "withThumbnails"
+                          }
+                        ],
+                        attrs: {
+                          id: "generate-thumbnails",
+                          type: "checkbox",
+                          autofocus: ""
+                        },
+                        domProps: {
+                          checked: Array.isArray(_vm.withThumbnails)
+                            ? _vm._i(_vm.withThumbnails, null) > -1
+                            : _vm.withThumbnails
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.withThumbnails,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  (_vm.withThumbnails = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.withThumbnails = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.withThumbnails = $$c
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "ml-1" }, [
+                        _vm._v("Generate thumbnails")
+                      ])
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
               _vm.loadingMediaFiles
                 ? _c("div", { staticClass: "loader-container" }, [
                     _c("div", { staticClass: "loader" }),
@@ -37678,7 +37770,7 @@ var render = function() {
               !(
                 !(_vm.showUploadArea && _vm.listenUploadArea) ||
                 _vm.draggingFile
-              )
+              ) && !_vm.uploadOnly
                 ? _c(
                     "button",
                     {

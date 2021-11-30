@@ -5,17 +5,19 @@ namespace OptimistDigital\MediaField\Classes;
 use Exception;
 use FFMpeg\FFMpeg;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use FFMpeg\Coordinate\TimeCode;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Support\Facades\File;
 use OptimistDigital\MediaField\Traits\ResolvesMedia;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Intervention\Image\Exception\NotSupportedException;
 
 class MediaHandler
 {
@@ -45,8 +47,9 @@ class MediaHandler
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
             'mime_type' => $request->file($key)->getClientMimeType(),
-            'collection' => $request->get('collection') ?? '',
-            'alt' => $request->get('alt') ?? ''
+            'collection' => $request->get('collection', ''),
+            'alt' => $request->get('alt', ''),
+            'withThumbnails' => $request->get('withThumbnails', true),
         ], $instance->getDisk());
     }
 
@@ -84,7 +87,7 @@ class MediaHandler
             if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
             return $this->storeFile($tmpPath, $this->getDisk());
         } catch (Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
         }
 
         return null;
@@ -180,7 +183,7 @@ class MediaHandler
                         'webp_size' => $disk->size(dirname($path) . '/' . $webpFilename),
                     ]);
                 }
-            } catch (\Intervention\ImageException\NotSupportedException $e) {
+            } catch (NotSupportedException $e) {
                 continue;
             }
         }
@@ -233,6 +236,8 @@ class MediaHandler
         }
 
         $mimeType = 'text/plain';
+        $withThumbnails = true;
+
         $filename = null;
         $tmpName = null;
         $tmpPath = null;
@@ -246,6 +251,7 @@ class MediaHandler
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
+            $withThumbnails = filter_var($fileData['withThumbnails'] ?? true, FILTER_VALIDATE_BOOLEAN);
         } else if ($isString) {
             if ($fileExists) {
                 $filename = $tmpName = basename($fileData);
@@ -265,7 +271,7 @@ class MediaHandler
             }
         }
 
-        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
+        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails];
     }
 
     private function isValid64base($str)
@@ -283,7 +289,8 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType] = $this->validateFileInput($fileData);
+
+        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails] = $this->validateFileInput($fileData);
 
         if (config('nova-media-field.resolve_duplicates', true)) {
             if ($file = $this->getFileHashFromPath($tmpPath . $tmpName)) {
@@ -316,18 +323,6 @@ class MediaHandler
             $origFile = file_get_contents($tmpPath . $tmpName);
             $image = Image::make($origFile);
 
-            $image_watermart_path = config('nova-media-field.image_watermark_path', null);
-            if(!is_null($image_watermart_path)) {
-                //Save image without watermark
-                $rawFilePath = $storagePath . pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
-                $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
-                $disk->put($rawFilePath, $file);
-
-                // Add watermark to image
-                $watermark = Image::make($image_watermart_path);
-                $image->insert($watermark, 'center');
-            }
-
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
             if (!empty($maxOriginalDimension)) {
@@ -337,8 +332,30 @@ class MediaHandler
                 });
             }
 
+            // Save as a separate file
+            $rawFileName = pathinfo($newFilename, PATHINFO_FILENAME) . '-raw.' . $origExtension;
+
             $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
-            $disk->put($storagePath . $newFilename, $file);
+            $disk->put($storagePath . $rawFileName, $file);
+
+            $watermarkPath = config('nova-media-field.watermark_path', null);
+
+            if (!empty($watermarkPath)) {
+                // Add watermark to image
+                try {
+                    $watermark = Image::make($watermarkPath);
+
+                    $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
+                    $watermarkImg = Image::make($origFile)
+                        ->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
+                        ->encode($origExtension, config('nova-media-field.quality', 80));
+
+                    // Save image with watermark
+                    $disk->put($storagePath . $newFilename, $watermarkImg);
+                } catch (Exception $e) {
+                    Log::error($e->getMessage());
+                }
+            }
 
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
@@ -368,9 +385,12 @@ class MediaHandler
             'file_hash' => $fileHash, // Original hash of uploaded file
         ]);
 
-        if ($isImageFile || $isVideoFile) {
+
+        if (($isImageFile || $isVideoFile) && $withThumbnails) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
-            $generatedImages['raw']['file_name'] = pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
+
+            $generatedImages['raw']['file_name'] = $rawFileName;
+
             $model->image_sizes = json_encode($generatedImages);
         }
 
@@ -398,7 +418,7 @@ class MediaHandler
         try {
             if (File::exists($path)) File::delete($path);
         } catch (Exception $e) {
-            \Log::error($e);
+            Log::error($e);
         }
     }
 }

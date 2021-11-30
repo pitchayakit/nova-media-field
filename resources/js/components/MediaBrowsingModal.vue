@@ -1,5 +1,12 @@
 <template>
-  <od-modal ref="isModalOpen" v-if="isModalOpen" @onClose="hideMediaLibrary" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
+  <od-modal
+    ref="isModalOpen"
+    v-if="isModalOpen"
+    @onClose="hideMediaLibrary"
+    :name="'isModalOpen'"
+    :align="'flex justify-end'"
+    width="1315"
+  >
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -65,14 +72,14 @@
 
         <div class="image-editor">
           <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
-           <button
-              type="button"
-              class="btn btn-default btn-primary mr-3 ml-4"
-              @click.prevent="removeItems"
-              v-if="stateActiveFile !== void 0"
-            >
-              {{ __('Delete') }}
-            </button>
+          <button
+            type="button"
+            class="btn btn-default btn-primary mr-3 ml-4"
+            @click.prevent="removeItems"
+            v-if="stateActiveFile !== void 0"
+          >
+            {{ __('Delete') }}
+          </button>
         </div>
 
         <div
@@ -97,6 +104,11 @@
         </div>
       </div>
 
+      <label v-if="showUploadArea || draggingFile" for="generate-thumbnails" class="flex">
+        <input id="generate-thumbnails" type="checkbox" v-model="withThumbnails" autofocus />
+        <span class="ml-1">Generate thumbnails</span>
+      </label>
+
       <div class="loader-container" v-if="loadingMediaFiles">
         <div class="loader" />
         <div class="small-loader" />
@@ -115,7 +127,7 @@
       </button>
       <button
         type="button"
-        v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
+        v-if="!(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
         v-on:click="showMediaLibrary"
         class="btn btn-default btn-primary whitespace-no-wrap"
       >
@@ -166,6 +178,7 @@ export default {
       listenUploadArea: false,
       stateActiveFile: void 0,
       stateSelectedFiles: [],
+      withThumbnails: this.field.withThumbnails ?? true,
     };
   },
 
@@ -259,26 +272,24 @@ export default {
       this.$emit('updateMedia');
     },
 
-    removeItems() {
-      axios.delete('/api/media/delete', {
-        data : {
-          stateActiveFile : this.stateActiveFile.data,
-        }
-        
-      })
-      .then(response => {
-          let selectMediaId = this.stateActiveFile.data.id;
-          let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-          this.files.splice(i, 1);
-          window.mediaLibrary.files = [...this.files]
-         
-          let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-          this.stateSelectedFiles.splice(j, 1);
-          this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
-          this.$emit('updateMedia');
-
-          this.stateActiveFile = void 0;
+    async removeItems() {
+      await axios.delete('/api/media/delete', {
+        data: {
+          stateActiveFile: this.stateActiveFile.data.id,
+        },
       });
+
+      let selectMediaId = this.stateActiveFile.data.id;
+      let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.files.splice(i, 1);
+      window.mediaLibrary.files = this.files;
+
+      let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.stateSelectedFiles.splice(j, 1);
+      this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+      this.$emit('updateMedia');
+
+      this.stateActiveFile = void 0;
     },
 
     onSearchInput(event) {
@@ -463,6 +474,7 @@ export default {
 
         const form = new FormData();
 
+        form.append('withThumbnails', this.withThumbnails);
         form.append('file', fileInfo.fileInput);
 
         if (fileInfo.collection) {
@@ -569,7 +581,7 @@ export default {
     height: calc(88vh - 60px);
 
     > div {
-      height: calc(88vh - 60px - 110px);
+      height: calc(100% - 80px);
     }
   }
 
@@ -583,7 +595,6 @@ export default {
   }
 
   .mime-type-icon {
-
     svg {
       position: static;
     }
