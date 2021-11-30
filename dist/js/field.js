@@ -1142,7 +1142,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 _context2.next = 2;
                 return axios["delete"]('/api/media/delete', {
                   data: {
-                    stateActiveFile: _this2.stateActiveFile.data.id
+                    stateActiveFile: _this2.stateActiveFile.data
                   }
                 });
 
