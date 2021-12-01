@@ -336,7 +336,7 @@ class MediaHandler
             $rawFileName = pathinfo($newFilename, PATHINFO_FILENAME) . '-raw.' . $origExtension;
 
             $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
-            $disk->put($storagePath . $rawFileName, $file);
+            Storage::disk('local')->put($storagePath . $rawFileName, $file);
 
             $watermarkPath = config('nova-media-field.watermark_path', null);
 
