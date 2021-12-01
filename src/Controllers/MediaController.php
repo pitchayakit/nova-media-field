@@ -85,6 +85,7 @@ class MediaController extends Controller
             $driver = config('nova-media-field.storage_driver');
             $mediaPath = $file['path'] . $file['file_name'];
             Storage::disk($driver)->delete($mediaPath); // Delete media file in storage
+            Storage::disk('local')->delete($file['path'] . $file['image_sizes']['raw']['file_name']); //Delete raw file in local disk storage 
 
             // Delete other related files like thumbnails
             foreach ($file['image_sizes'] as $imageSize) {
