@@ -1142,7 +1142,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 _context2.next = 2;
                 return axios["delete"]('/api/media/delete', {
                   data: {
-                    stateActiveFile: _this2.stateActiveFile.data
+                    mediaId: _this2.stateActiveFile.data.id
                   }
                 });
 
@@ -3754,7 +3754,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".preview-container {\n  padding: 5px;\n  border-radius: 4px;\n  overflow: hidden;\n  border: 1px solid #eef1f4;\n  height: 119px;\n  width: 119px;\n}\n.preview-container.multiple-preview {\n  min-height: 105px;\n  height: auto;\n  max-height: 235px;\n  width: 100%;\n  overflow-y: auto;\n}\n.preview-container.multiple-preview .uploaded-file:hover {\n  cursor: all-scroll;\n}\n.preview-container.multiple-preview .no-order .uploaded-file:hover {\n  cursor: inherit;\n}\n.preview-container::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);\n  background-color: #fff;\n  border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar {\n  width: 6px;\n  border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar-thumb {\n  background-color: rgba(0, 0, 0, 0.1);\n  border-radius: 3px;\n}\n.preview-container .media-preview {\n  overflow: hidden;\n  display: flex;\n  flex-wrap: wrap;\n}\n.preview-container .uploaded-file {\n  width: 104px;\n  height: 104px;\n  margin: 2.5px;\n}\n.preview-container .uploaded-file .thumbnail-container {\n  border: 1px solid transparent;\n}\n.preview-container .uploaded-file .thumbnail-container:hover {\n  border: 1px solid #bbbec0;\n  box-shadow: none;\n}\n.preview-container .uploaded-file .thumbnail-container img {\n  -o-object-fit: cover;\n     object-fit: cover;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".preview-container {\n  padding: 5px;\n  border-radius: 4px;\n  overflow: hidden;\n  border: 1px solid #eef1f4;\n  height: 119px;\n  width: 119px;\n}\n.preview-container.multiple-preview {\n  min-height: 105px;\n  height: auto;\n  max-height: 235px;\n  width: 100%;\n  overflow-y: auto;\n}\n.preview-container.multiple-preview .uploaded-file:hover {\n  cursor: all-scroll;\n}\n.preview-container.multiple-preview .no-order .uploaded-file:hover {\n  cursor: inherit;\n}\n.preview-container::-webkit-scrollbar-track {\n  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);\n  background-color: #fff;\n  border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar {\n  width: 6px;\n  border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar-thumb {\n  background-color: rgba(0, 0, 0, 0.1);\n  border-radius: 3px;\n}\n.preview-container .media-preview {\n  overflow: hidden;\n  display: flex;\n  flex-wrap: wrap;\n}\n.preview-container .uploaded-file {\n  width: 104px;\n  height: 104px;\n  margin: 2.5px;\n}\n.preview-container .uploaded-file .thumbnail-container {\n  border: 1px solid transparent;\n}\n.preview-container .uploaded-file .thumbnail-container:hover {\n  border: 1px solid #bbbec0;\n  box-shadow: none;\n}\n.preview-container .uploaded-file .thumbnail-container img {\n  -o-object-fit: cover;\n     object-fit: cover;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -37411,10 +37411,10 @@ var render = function() {
                 "div",
                 {
                   staticClass:
-                    "modal-header flex flex-wrap justify-between mb-6"
+                    "flex flex-wrap justify-between mb-6 modal-header"
                 },
                 [
-                  _c("h2", { staticClass: "text-90 font-normal text-xl" }, [
+                  _c("h2", { staticClass: "text-xl font-normal text-90" }, [
                     !_vm.uploadOnly
                       ? _c("span", [_vm._v("Browse media library")])
                       : _vm._e(),
@@ -37587,7 +37587,7 @@ var render = function() {
                                 "button",
                                 {
                                   staticClass:
-                                    "btn btn-default btn-primary mr-3 ml-4",
+                                    "ml-4 mr-3 btn btn-default btn-primary",
                                   attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
@@ -37631,7 +37631,7 @@ var render = function() {
                             _c(
                               "svg",
                               {
-                                staticClass: "fill-current w-4 h-4 mx-auto",
+                                staticClass: "w-4 h-4 mx-auto fill-current",
                                 attrs: {
                                   xmlns: "http://www.w3.org/2000/svg",
                                   viewBox: "0 0 20 20"
@@ -37742,7 +37742,7 @@ var render = function() {
           _c(
             "div",
             {
-              staticClass: "w-full flex",
+              staticClass: "flex w-full",
               attrs: { slot: "buttons" },
               slot: "buttons"
             },
@@ -37755,7 +37755,7 @@ var render = function() {
                     "button",
                     {
                       staticClass:
-                        "btn btn-default btn-primary whitespace-no-wrap",
+                        "whitespace-no-wrap btn btn-default btn-primary",
                       attrs: { type: "button" },
                       on: { click: _vm.openModalWithUpload }
                     },
@@ -37775,7 +37775,7 @@ var render = function() {
                     "button",
                     {
                       staticClass:
-                        "btn btn-default btn-primary whitespace-no-wrap",
+                        "whitespace-no-wrap btn btn-default btn-primary",
                       attrs: { type: "button" },
                       on: { click: _vm.showMediaLibrary }
                     },
@@ -37783,14 +37783,14 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              _c("div", { staticClass: "flex w-full justify-end" }, [
+              _c("div", { staticClass: "flex justify-end w-full" }, [
                 (!(_vm.showUploadArea && _vm.listenUploadArea) ||
                   _vm.draggingFile) &&
                 !_vm.uploadOnly
                   ? _c(
                       "button",
                       {
-                        staticClass: "btn btn-default btn-primary mr-3",
+                        staticClass: "mr-3 btn btn-default btn-primary",
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
