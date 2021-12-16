@@ -63,10 +63,12 @@
             v-for="file in fileList.filter(filterUploadedFiles)"
             :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
             :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-            @click.native="toggleFileSelect(file)"
+            @click.native="bulkDelete ? '' : toggleFileSelect(file)"
             :key="file.id"
             :file="file.processed ? file.data : {}"
             :progress="file.uploading ? file.uploadProgress : -1"
+            :bulkDelete="bulkDelete"
+            @deleteFile="deleteFile(file.data.id)"
           />
         </div>
 
@@ -75,7 +77,7 @@
           <button
             type="button"
             class="ml-4 mr-3 btn btn-default btn-primary"
-            @click.prevent="removeItems"
+            @click.prevent="deleteFile(stateActiveFile.data.id)"
             v-if="stateActiveFile !== void 0"
           >
             {{ __('Delete') }}
@@ -125,6 +127,18 @@
       >
         {{ __('Upload files') }}
       </button>
+
+      <button
+        type="button"
+        v-if="
+          (uploadOnly && !(showUploadArea && listenUploadArea)) || !(showUploadArea && listenUploadArea) || draggingFile
+        "
+        v-on:click="bulkDelete = !bulkDelete"
+        class="ml-3 whitespace-no-wrap btn btn-default btn-primary"
+      >
+        {{ __('Bulk delete') }}
+      </button>
+
       <button
         type="button"
         v-if="!(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
@@ -179,6 +193,7 @@ export default {
       stateActiveFile: void 0,
       stateSelectedFiles: [],
       withThumbnails: this.field.withThumbnails ?? true,
+      bulkDelete: false,
     };
   },
 
@@ -272,23 +287,25 @@ export default {
       this.$emit('updateMedia');
     },
 
-    async removeItems() {
+    async deleteFile(selectMediaId) {
       await axios.delete('/api/media/delete', {
         data: {
-          mediaId: this.stateActiveFile.data.id,
+          mediaId: selectMediaId,
         },
       });
 
-      let selectMediaId = this.stateActiveFile.data.id;
-      let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-      this.files.splice(i, 1);
+      let fileIndex = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      if(fileIndex != -1)
+        this.files.splice(fileIndex, 1);
       window.mediaLibrary.files = this.files;
 
-      let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-      this.stateSelectedFiles.splice(j, 1);
+      let stateSelectedFileIndex = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      if(stateSelectedFileIndex != -1) //if file is selected, remove from state
+        this.stateSelectedFiles.splice(stateSelectedFileIndex, 1);
+
       this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
       this.$emit('updateMedia');
-
+      
       this.stateActiveFile = void 0;
     },
 

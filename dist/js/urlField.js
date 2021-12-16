@@ -1038,8 +1038,9 @@ var VueClipboardConfig = {
 
 var VueClipboard = {
   install: function (Vue) {
-    Vue.prototype.$clipboardConfig = VueClipboardConfig
-    Vue.prototype.$copyText = function (text, container) {
+    var globalPrototype = Vue.version.slice(0, 2) === '3.' ? Vue.config.globalProperties : Vue.prototype
+    globalPrototype.$clipboardConfig = VueClipboardConfig
+    globalPrototype.$copyText = function (text, container) {
       return new Promise(function (resolve, reject) {
         var fakeElement = document.createElement('button')
         var clipboard = new Clipboard(fakeElement, {
@@ -1095,6 +1096,8 @@ var VueClipboard = {
         }
       },
       unbind: function (el, binding) {
+        // FIXME: investigate why $element._vClipboard was missing
+        if (!el._vClipboard) return
         if (binding.arg === 'success') {
           delete el._vClipboard_success
         } else if (binding.arg === 'error') {
@@ -1470,7 +1473,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
-var render = function() {
+var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -1483,8 +1486,8 @@ var render = function() {
           rawName: "v-tooltip.click",
           value: _vm.__("Copy to clipboard"),
           expression: "__('Copy to clipboard')",
-          modifiers: { click: true }
-        }
+          modifiers: { click: true },
+        },
       ],
       staticClass:
         "cursor-pointer text-70 hover:text-primary mr-3 inline-flex items-center fill-current",
@@ -1492,17 +1495,16 @@ var render = function() {
         xmlns: "http://www.w3.org/2000/svg",
         viewBox: "0 0 24 24",
         width: "24",
-        height: "24"
+        height: "24",
       },
-      on: { click: _vm.copyToClipboard }
+      on: { click: _vm.copyToClipboard },
     },
     [
       _c("path", {
         attrs: {
-          d:
-            "M17 7h2.25c.97 0 1.75.78 1.75 1.75v10.5c0 .97-.78 1.75-1.75 1.75H8.75C7.78 21 7 20.22 7 19.25V17H4.75C3.78 17 3 16.22 3 15.25V4.75C3 3.78 3.78 3 4.75 3h10.5c.97 0 1.75.78 1.75 1.75V7zm-2 0V5H5v10h2V8.75C7 7.78 7.78 7 8.75 7H15zM9 9v10h10V9H9z"
-        }
-      })
+          d: "M17 7h2.25c.97 0 1.75.78 1.75 1.75v10.5c0 .97-.78 1.75-1.75 1.75H8.75C7.78 21 7 20.22 7 19.25V17H4.75C3.78 17 3 16.22 3 15.25V4.75C3 3.78 3.78 3 4.75 3h10.5c.97 0 1.75.78 1.75 1.75V7zm-2 0V5H5v10h2V8.75C7 7.78 7.78 7 8.75 7H15zM9 9v10h10V9H9z",
+        },
+      }),
     ]
   )
 }
@@ -1525,7 +1527,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
-var render = function() {
+var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -1539,14 +1541,14 @@ var render = function() {
           { staticClass: "flex items-center" },
           [
             _c("Link", { attrs: { url: _vm.field.value } }, [
-              _vm._v("\n        " + _vm._s(_vm.field.value) + "\n      ")
+              _vm._v("\n        " + _vm._s(_vm.field.value) + "\n      "),
             ]),
             _vm._v(" "),
-            _c("CopyIcon", { attrs: { text: _vm.field.value } })
+            _c("CopyIcon", { attrs: { text: _vm.field.value } }),
           ],
           1
-        )
-      ])
+        ),
+      ]),
     ],
     2
   )
@@ -1570,7 +1572,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
-var render = function() {
+var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -1579,10 +1581,10 @@ var render = function() {
     { staticClass: "flex items-center" },
     [
       _c("Link", { attrs: { url: _vm.field.value } }, [
-        _vm._v(_vm._s(_vm.__("Link")))
+        _vm._v(_vm._s(_vm.__("Link"))),
       ]),
       _vm._v(" "),
-      _c("CopyIcon", { attrs: { text: _vm.field.value } })
+      _c("CopyIcon", { attrs: { text: _vm.field.value } }),
     ],
     1
   )
@@ -1606,7 +1608,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render),
 /* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
 /* harmony export */ });
-var render = function() {
+var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -1614,7 +1616,7 @@ var render = function() {
     "a",
     {
       staticClass: "no-underline dim font-bold text-80 hover:text-primary mr-2",
-      attrs: { href: _vm.url, target: "_blank" }
+      attrs: { href: _vm.url, target: "_blank" },
     },
     [_vm._t("default")],
     2
