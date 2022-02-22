@@ -387,7 +387,7 @@ class MediaHandler
 
 
         if (($isImageFile || $isVideoFile) && $withThumbnails) {
-            $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+            $generatedImages = $this->generateImageSizes(asset("storage/" . $storagePath . $newFilename), $fullFilePath, $mimeType, $disk);
 
             $generatedImages['raw']['file_name'] = $rawFileName;
 
