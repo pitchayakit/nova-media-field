@@ -346,9 +346,8 @@ class MediaHandler
                     $watermark = Image::make($watermarkPath);
 
                     $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
-                    $watermarkImg = Image::make($origFile)
-                        ->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
-                        ->encode($origExtension, config('nova-media-field.quality', 80));
+                    
+                    $watermarkImg = $file->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y']);
 
                     // Save image with watermark
                     $disk->put($storagePath . $newFilename, $watermarkImg);
