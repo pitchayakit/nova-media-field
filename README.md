@@ -22,11 +22,9 @@ This [Laravel Nova](https://nova.laravel.com) package adds a simple media upload
 - WebP generator (also re-generation via command)
 - Works with [nova-translatable](https://github.com/optimistdigital/nova-translatable)
 
-
 ## Upgrading to v2
 
 Check [CHANGELOG.MD](https://github.com/optimistdigital/nova-media-field/blob/v2/CHANGELOG.md)
-
 
 ## Installation
 
@@ -65,8 +63,8 @@ fields() {
     MediaField::make('Profile image', 'profile_image'),
 
     // Configurable options:
-    MediaField::make('Config example', 'config_example'),
-      ->multiple() // Allows multiple images to tbe selected
+    MediaField::make('Config example', 'config_example')
+      ->multiple() // Allows multiple images to to be selected
       ->collection('profile-pictures') // Defines a fixed collection of images instead of a global scope
       ->compact($width, $height = null) // Defines the thumbnail image size shown in Nova (to actually change thumbnail image size, use config)
   ]
@@ -173,7 +171,6 @@ Collection configuration goes under media field config file under `collection` k
 - `constraints` - Array of validation rules (like in Request validation)
 - `image_sizes` - Sizes to generate (overrides default)
 
-
 ### Handle duplicate uploads
 
 If `resolve_duplicates` is set to true then md5 hash of first mb of the original uploaded
@@ -208,7 +205,6 @@ This package allows overriding of core logic for any custom needs project may ha
 ]
 
 ```
-
 
 ## Credits
 

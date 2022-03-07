@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.0.0] - 04-03-2022
+
+### Changed
+
+- Dropped support for PHP 7
+- Added Laravel 9 support
+- Upgraded all packages
+
+## [2.1.4] - 07-02-2022
+
+### Added
+
+- Added `middlewares` config option (thanks to [@Gertiozuni](https://github.com/Gertiozuni))
+- Added `autoload_migrations` config option (thanks to [@Gertiozuni](https://github.com/Gertiozuni))
+
+## [2.1.3] - 31-01-2022
+
+### Changed
+
+- Fixed file path generation in regenerate-thumbnails command (thanks to [@RistoNiinemets](https://github.com/RistoNiinemets))
+
+## [2.1.2] - 2021-12-28
+
+### Changed
+
+- Fixed files not being deleted when media is trashed from the resource index view (thanks to [@murad-optimist](https://github.com/murad-optimist))
+
 ## [2.1.1] - 2021-12-13
 
 ### Changed
