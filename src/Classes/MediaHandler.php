@@ -347,7 +347,19 @@ class MediaHandler
 
                     $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
                     
-                    $watermarkImg = $file->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y']);
+                    $rawFile = Storage::disk('local')->get($storagePath . $rawFileName);
+
+                    //Load raw file
+                    $watermarkImg = Image::make($rawFile);
+                    //Scale down watermark size
+                    if($watermarkImg->width() < $maxOriginalDimension) {
+                        $scaleDownWidth =  $watermarkImg->width() * $watermark->width() / $maxOriginalDimension;
+                        $scaleDownHeight = $scaleDownWidth * $watermark->height() /  $watermark->width();
+                        $watermark->resize($scaleDownWidth, $scaleDownHeight);
+                    }
+                     //Attach watermark process
+                    $watermarkImg->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
+                    ->encode($origExtension, config('nova-media-field.quality', 80));
 
                     // Save image with watermark
                     $disk->put($storagePath . $newFilename, $watermarkImg);
