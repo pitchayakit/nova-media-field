@@ -320,8 +320,8 @@ class MediaHandler
             $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
             // Encode original
-            $origFile = file_get_contents($tmpPath . $tmpName);
-            $image = Image::make($origFile);
+            $image = Image::make($tmpPath . $tmpName);
+            $image->orientate();
 
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
