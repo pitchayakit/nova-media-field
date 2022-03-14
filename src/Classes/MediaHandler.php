@@ -199,7 +199,7 @@ class MediaHandler
      */
     protected function getUploadPath($disk): string
     {
-        $subPath = config('nova-media-field.storage_path') . date('Y') . '/' . date('m') . '/';
+        $subPath = config('nova-media-field.storage_path') . date('Y') . '/' . date('m') . '/' . date('d') . '/' . date('h') . '/';
         if (!$disk->exists($subPath)) $disk->makeDirectory($subPath);
         return $subPath;
     }
