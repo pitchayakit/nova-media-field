@@ -114,7 +114,7 @@ class MediaHandler
     }
 
     /**
-     * @param $tempFilePath
+     * @param string $tempFilePath
      * @param $path - Path on disk
      * @param $mimeType
      * @param $disk - Saving destination
@@ -139,6 +139,7 @@ class MediaHandler
                     'ffprobe.binaries' => env('FFPROBE_PATH'),
                 ])->open($tempFilePath);
                 $video->frame(TimeCode::fromSeconds(1))->save($thumbnailTmpFile);
+
                 $img = Image::make($thumbnailTmpFile);
                 $origExtension = 'jpg';
             } else {
@@ -398,8 +399,10 @@ class MediaHandler
 
 
         if (($isImageFile || $isVideoFile) && $withThumbnails) {
-            $generatedImages = $this->generateImageSizes(asset("storage/" . $storagePath . $newFilename), $fullFilePath, $mimeType, $disk);
-
+            // We will have $image if it was an image file
+            // For video files, pass temp file path
+            $generatedImages = $this->generateImageSizes($image ? asset("storage/" . $storagePath . $newFilename) : $tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+            
             $generatedImages['raw']['file_name'] = $rawFileName;
 
             $model->image_sizes = json_encode($generatedImages);
