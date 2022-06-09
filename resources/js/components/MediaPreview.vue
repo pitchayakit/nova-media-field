@@ -124,7 +124,6 @@ export default {
   &.multiple-preview {
     min-height: 105px;
     height: auto;
-    max-height: 235px;
     width: 100%;
     overflow-y: auto;
 
