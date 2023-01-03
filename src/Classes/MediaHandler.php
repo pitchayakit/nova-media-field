@@ -316,7 +316,7 @@ class MediaHandler
             if (in_array($origExtension, ['webp'])) $origExtension = 'png';
 
             // If image is not any of common formats, save it as JPG
-            if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
+            if (!in_array($origExtension, ['jpg', 'jpeg', 'gif'])) $origExtension = 'jpg';
 
             $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
