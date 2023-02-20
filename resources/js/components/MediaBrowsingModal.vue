@@ -199,7 +199,7 @@ export default {
 
   computed: {
     fileList() {
-      return this.files.sort(this.sortByDate).sort(this.sortUploadedFiles);
+      return this.files.sort(this.sortByName);
     },
 
     currentCollection: {
@@ -359,6 +359,12 @@ export default {
       }
 
       return 0;
+    },
+    sortByName(a, b) {
+      if(b.data.file_name)
+        return Number(a.data.file_name.match(/(\d+)/g)[0]) - Number(b.data.file_name.match(/(\d+)/g)[0]);
+      else
+        return 0;
     },
 
     fileBrowserSelectListener(e) {
