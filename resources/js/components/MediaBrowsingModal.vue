@@ -362,7 +362,8 @@ export default {
     },
     sortByName(a, b) {
       if(b.data.file_name)
-        return Number(a.data.file_name.match(/(\d+)/g)[0]) - Number(b.data.file_name.match(/(\d+)/g)[0]);
+        if (a.data.file_name < b.data.file_name) return -1;
+        if (a.data.file_name > b.data.file_name) return 1;
       else
         return 0;
     },
