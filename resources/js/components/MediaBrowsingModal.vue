@@ -199,7 +199,7 @@ export default {
 
   computed: {
     fileList() {
-      return this.files.sort(this.sortByName);
+      return this.files;
     },
 
     currentCollection: {
@@ -253,7 +253,7 @@ export default {
       }
 
       if (newVal) {
-        this.refreshFiles();
+        //this.refreshFiles();
         this.stateActiveFile = this.activeFile ? { ...this.activeFile } : void 0;
         this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? [...this.selectedFiles] : [];
         this.addEventListeners();

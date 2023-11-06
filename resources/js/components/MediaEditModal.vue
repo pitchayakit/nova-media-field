@@ -1,8 +1,8 @@
 <template>
   <od-modal ref="isModalOpen" v-if="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
     <div slot="container">
-      <div class="modal-header flex flex-wrap justify-between mb-6">
-        <h2 class="text-90 font-normal text-xl">Edit media</h2>
+      <div class="flex flex-wrap justify-between mb-6 modal-header">
+        <h2 class="text-xl font-normal text-90">Edit media</h2>
       </div>
       <edit-image v-if="file" :file="file.data" />
       <div class="loader-container" v-else>
@@ -10,9 +10,9 @@
         <div class="small-loader" />
       </div>
     </div>
-    <div slot="buttons" class="w-full flex">
-      <div class="flex w-full justify-end">
-        <button type="button" @click.prevent="closeModalAndSave" class="btn btn-default btn-primary mr-3">
+    <div slot="buttons" class="flex w-full">
+      <div class="flex justify-end w-full">
+        <button type="button" @click.prevent="closeModalAndSave" class="mr-3 btn btn-default btn-primary">
           {{ __('Apply and close') }}
         </button>
         <button type="button" @click.prevent="closeModal" class="btn btn-default btn-danger">

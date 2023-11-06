@@ -68,7 +68,7 @@ class MediaController extends Controller
             $query->where('collection_name', '=', $collecton);
         }
 
-        $paginator = $query->latest()->paginate(30);
+        $paginator = $query->orderBy('file_name', 'ASC')->latest()->paginate(30);
         $paginator->getCollection();
 
         return response()->json($paginator, 200);

@@ -33,12 +33,12 @@
           {{ __('No media selected') }}
         </p>
 
-        <div class="field-buttons ml-auto">
+        <div class="ml-auto field-buttons">
           <button
             type="button"
             v-if="selectedFiles.length"
             v-on:click="clearSelectedFiles"
-            class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3"
+            class="relative inline-flex items-center ml-auto mr-3 btn btn-default btn-danger"
           >
             <span>
               {{ __('Clear') }}
@@ -47,7 +47,7 @@
           <button
             type="button"
             v-on:click="openMediaBrowsingModal"
-            class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3"
+            class="relative inline-flex items-center ml-auto mr-3 btn btn-default btn-primary"
           >
             <span>
               {{ __('Media library') }}
